@@ -13,4 +13,9 @@ fun printList (xlist) =
             printList(xlist')
         )
 
-datatype karim = ,
+fun unzip3 lst =
+ case lst of 
+    [] => ([], [], [])
+ | (a, b, c)::tl => 
+ case unzip3 tl of        
+    (x, y, z) => (a::x, b::y, c::z)
