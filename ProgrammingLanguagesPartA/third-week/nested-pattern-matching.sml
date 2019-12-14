@@ -26,3 +26,8 @@ fun multsign (x1,x2) =
         | (N,N) => P
         | _ => N (* many say bad style; I am okay with it *)
     end
+
+
+fun add (a, b) =
+    case a, b of
+        

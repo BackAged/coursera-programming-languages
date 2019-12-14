@@ -42,13 +42,11 @@ fun longest_string1(ls) = List.foldl (fn (x, init) => if String.size(x) > String
 fun longest_string2(ls) = List.foldl (fn (x, init) => if String.size(x) > String.size(init) 
 	then x else if String.size(x) = String.size(init) then x else init) "" ls
 
-fun longest_string3(ls) = List.foldl (fn (x, init) => if String.size(x) > String.size(init) then x else init) "" ls
+fun longest_string_helper f ls = List.foldl (fn (x, init) => if f(String.size(x), String.size(init)) then x else init) "" ls
 
-fun longest_string4(ls) = List.foldl (fn (x, init) => if String.size(x) > String.size(init)
-	then x else if String.size(x) = String.size(init) then x else init) "" ls
+val longest_string3 = longest_string_helper (fn (x1, x2) => if x1 > x2 then true else false) 
 
-fun longest_string_helper f ls = List.foldl (fn (x, init) => if String.size(x) > String.size(init)
-	then x else if String.size(x) = String.size(init) then x else init) "" ls
+val longest_string4 = longest_string_helper (fn (x1, x2) => if x1 > x2 then true else if x1 = x2 then true else false)
 
 val longest_capitalized = longest_string1  o only_capitals
 
@@ -73,3 +71,23 @@ fun all_answers f l =
 fun count_wildcards p = g (fn () => 1) (fn x => 0) p
 
 fun count_wild_and_variable_lengths p = g (fn () => 1) (fn x => String.size(x)) p
+
+fun count_some_var (s, p) = g (fn () => 0) (fn x => if x = s then 1 else 0) p
+
+
+fun check_pat p =
+	let
+		fun getAllVariables p =
+			case p of
+				Variable x        => [x]
+				| TupleP ps         => List.foldl (fn (xs,acc) => acc @ getAllVariables(xs)) [] ps
+				| ConstructorP(_,p) => getAllVariables(p)
+				| _                 => []
+		fun isUnique vs =
+			case vs of
+				[] => true
+				| x :: vs => if (List.exists (fn (x1) => x1 = x) vs) = true then false else true
+	in
+		isUnique (getAllVariables p)
+	end
+	
